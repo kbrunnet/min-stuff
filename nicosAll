@@ -1,0 +1,95 @@
+#!/bin/bash
+#Declarations
+
+array=(
+#     BigDirectories
+#     BlankDisk
+#     HardDisk
+#     Partitioned
+#     SmallBlocks--1k
+#     BigIndirectDirs
+#     BrokenStuff
+#     Notes
+#     RandomDisk
+      TestImage
+#     BigZones-16k
+#     Files
+#     Notes~
+#     ReallyBigZones-64k
+#     WeirdStuff
+      )
+
+commandLineParams=(
+      "-h"
+      "BlankDisk"
+      "TestImage"
+      "RandomDisk"
+      "-p 0 Partitioned"
+      "-p 1 Partitioned"
+      "-p 2 Partitioned"
+      "-p 3 Partitioned"
+      "-p 5 Partitioned"
+      "Partitioned"
+      "-p 1 HardDisk"
+      "-p 0 -s 0 HardDisk"
+      "-p 0 -s 1 HardDisk"
+      "TestImage /Hello"
+      "-p 0 Partitioned /Message"
+      "-p 1 Partitioned /Message"
+      "-p 2 Partitioned /Message"
+      "-p 3 Partitioned /Message"
+      "-p 0 -s 0 HardDisk"
+      "-p 0 -s 2 HardDisk"
+"-p 0 -s 2 HardDisk /home/pnico/Message"
+"-p 0 -s 0 HardDisk /home/pnico/Message"
+"Files /Files"
+"Files /Files/0000_Zones"
+"Files /Files/0000_Zone"
+"Files /Files/0007_Zones"
+"Files /Files/0010_Zones"
+"Files /Files/1032_Zones"
+"Files /DeepPaths/a/b/c/d/e/i/j/k/Files"
+"Files /DeepPaths/a/b/c/d/e/i/j/k/Files/Message"
+"BigDirectories"
+"BigDirectories LastFile"
+"BigIndirectDirs Level1/Level2"
+"BigIndirectDirs Level1/Level2/LastFile"
+"Files /Deleted"
+"Files /Deleted/File-10"
+"Files /Deleted/File-05"
+"SmallBlocks--1k"
+"SmallBlocks--1k DirTwo/FileTwo"
+"BigZones-16k"
+"BigZones-16k /DirOne/FileTwo"
+"ReallyBigZones-64k"
+"ReallyBigZones-64k DirTwo/FileOne"
+"ReallyBigZones-64k /./.././../DirTwo/FileOne"
+"Files /Permissions/777"
+"Files /Permissions/755"
+"Files /Permissions/753"
+"Files /Permissions/357"
+"Files /Permissions/000"
+"SmallBlocks--1k"
+"SmallBlocks--1k DirTwo/FileTwo"
+"BigZones-16k"
+"BigZones-16k /DirOne/FileTwo"
+"ReallyBigZones-64k"
+"ReallyBigZones-64k DirTwo/FileOne"
+"  trying to traverse a file"
+)
+make
+   for i in "${commandLineParams[@]}"
+   do
+   	echo ' '
+   	echo ' '
+   	echo ' '
+   	echo ' '
+      echo minls $i
+      cd Images
+#.././minls $i > mine
+      ~pn-cs453/demos/./minls $i 
+#     diff mine nicos
+      cd ..
+   done
+
+#diff mine nicos
