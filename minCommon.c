@@ -25,6 +25,7 @@ static uint32_t partitionOffset = 0;
 static uint32_t partitionSize = -1;
 char fullPathName[PATH_MAX] = "";
 
+/* Parse the arguments for the minls and minget programs */
 void parseArgs(int argc, char *const argv[], struct minOptions *options) {
    int opt;
    opterr = 0;
@@ -80,6 +81,7 @@ void parseArgs(int argc, char *const argv[], struct minOptions *options) {
    strcpy(fullPathName, options->path);
 }
 
+/* Gets configuration data for a Minix image file */
 void getMinixConfig(struct minOptions options, struct minixConfig *config) {
    // TODO: check for existing filename
    config->image = fopen(options.imagefile, "rb");
@@ -107,14 +109,17 @@ void getMinixConfig(struct minOptions options, struct minixConfig *config) {
    (config->sb.blocksize << config->sb.log_zone_size) : config->sb.blocksize;
 }
 
+/* Wrapper for setOffset on top-level partitions */
 void setPartitionOffset(FILE *image, int partitionNum) {
    setOffset(image, partitionNum, 0);
 }
 
+/* Wrapper for setOffset on subpartitions */
 void setSubpartitionOffset(FILE *image, int partitionNum) {
    setOffset(image, partitionNum, 1);
 }
 
+/* Sets a global offset when seeking in partitioned images */
 void setOffset(FILE *image, int partitionNum, int isSub) {
    /* Read the partition table */
    fseekPartition(image, 0x1BE, SEEK_SET);
@@ -177,11 +182,13 @@ struct inode traversePath(struct inode *inodeTable,
    return currnode;
 }
 
+/* Assumes that the given inode is a directory, returning all its entries */
 struct fileEntry *getFileEntries(struct inode directory) {
    struct fileEntry *entries = (struct fileEntry *) copyZones(directory);
    return entries;
 }
 
+/* Returns the inode at the given index in the inode Table */
 void *getInode(int inodeNum) {
    // printf("getting inode: %d\n", inodeNum);
    if (inodeNum == 0) {
@@ -193,6 +200,9 @@ void *getInode(int inodeNum) {
    return &iTable[inodeNum - 1];
 }
 
+/* Copies all valid direct, indirect, and double-indirect zones in the given
+ * inode, zongregating them into a single block of returned memory
+ */ 
 void *copyZones(struct inode file) {
    char *data, *nextData;
    uint32_t dataSize = (((file.size - 1) / zone_size) + 1) * zone_size;
@@ -275,11 +285,11 @@ void *copyZones(struct inode file) {
    return data;
 }
 
+/* Wrapper for seeking into a potentially partitioned image */
 size_t fseekPartition(FILE *stream, long int offset, int whence) {
    if (partitionSize > -1 && offset > partitionSize) {
       fprintf(stderr, "Attempting to seek outside of partition\n");
       exit(EXIT_FAILURE);
    }
-   // fprintf(stderr, "seeking with partition: %d\n", partitionOffset);
    return fseek(stream, offset + partitionOffset, whence);
 }
