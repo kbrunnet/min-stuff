@@ -27,6 +27,8 @@
 #define MIN_IWOTH 0002
 #define MIN_IXOTH 0001
 
+#define INVALID_OPTION -1
+
 unsigned int zone_size;
 struct inode *iTable;
 FILE *image;
