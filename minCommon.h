@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <linux/limits.h>
+#include <errno.h>
 
 /* constants */
 #define PTABLE_OFFSET 0x1BE
@@ -54,6 +55,9 @@ struct part_entry {
 /* Partition types. */
 #define NO_PART      0x00  /* unused entry */
 #define MINIX_PART   0x81  /* Minix partition type */
+
+#define IS_PART      0
+#define IS_SUB_PART  1
 
 
 struct superblock { /* Minix Version 3 Superblock
