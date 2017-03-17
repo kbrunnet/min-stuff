@@ -11,8 +11,17 @@ int main(int argc, char *const argv[])
    options.partition = INVALID_OPTION;
    options.subpartition = INVALID_OPTION;
    options.imagefile = malloc(NAME_MAX);
+   if (!options.imagefile) {
+      fprintf(stderr, "Malloc is failing\n");
+   }
    options.path = malloc(PATH_MAX);
+   if (!options.path) {
+      fprintf(stderr, "Malloc is failing\n");
+   }
    options.fullPath = malloc(PATH_MAX);
+   if (!options.fullPath) {
+      fprintf(stderr, "Malloc is failing\n");
+   }
 
    /* calls the function in mincommon.c 
    that parses the arguments */
@@ -36,7 +45,10 @@ int main(int argc, char *const argv[])
                   SEEK_SET);
 
    iTable = (struct inode*) malloc(numInodes * sizeof(struct inode));
-   fread(iTable, sizeof(struct inode), numInodes, image);
+   size_t result = fread(iTable, sizeof(struct inode), numInodes, image);
+   if (result != numInodes) {
+      fprintf(stderr, "Error reading in the image to the iNode table\n");
+   }
 
    /* traverses through the root to find the file
       user searched for */ 

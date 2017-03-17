@@ -11,6 +11,18 @@ int main(int argc, char *const argv[])
    options.imagefile = malloc(NAME_MAX);
    options.path = malloc(PATH_MAX);
    options.fullPath = malloc(PATH_MAX);
+   
+   if (!options.imagefile) {
+      fprintf(stderr, "Malloc is failing\n");
+   }
+   options.path = malloc(PATH_MAX);
+   if (!options.path) {
+      fprintf(stderr, "Malloc is failing\n");
+   }
+   options.fullPath = malloc(PATH_MAX);
+   if (!options.fullPath) {
+      fprintf(stderr, "Malloc is failing\n");
+   }
 
    parseArgs(argc, argv, &options);
    strcpy(fullPath, options.fullPath);
@@ -30,7 +42,10 @@ int main(int argc, char *const argv[])
                   SEEK_SET);
 
    iTable = (struct inode*) malloc(numInodes * sizeof(struct inode));
-   fread(iTable, sizeof(struct inode), numInodes, image);
+   size_t result = fread(iTable, sizeof(struct inode), numInodes, image);
+   if (result != numInodes) {
+      fprintf(stderr, "Error reading in the image to the iNode table\n");
+   }
 
    struct inode destFile = traversePath(iTable, 
       config.sb.ninodes, options.path);
